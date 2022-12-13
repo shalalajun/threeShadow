@@ -1,10 +1,14 @@
-varying vec2 vUv;
-varying vec4 worldPosition;
+varying vec3 vNormal;
 
-void main() {
-    vUv = uv;
-    
-    worldPosition = modelMatrix * vec4(position, 1.0);
+uniform mat4 uShadowCameraP;
+uniform mat4 uShadowCameraV;
 
-    gl_Position = projectionMatrix * modelViewMatrix  * vec4(position,1.0);
-  }
+varying vec4 vShadowCoord;
+
+void main(){
+    vNormal = normal;
+    vec3 pos = position;
+
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(pos, 1.0);
+    vShadowCoord = uShadowCameraP * uShadowCameraV * modelMatrix * vec4(pos, 1.0);
+}

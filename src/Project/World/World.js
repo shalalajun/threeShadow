@@ -11,7 +11,7 @@ export default class World
   
         this.scene = this.project.scene;
         this.resources = this.project.resources;
-
+        
 
         this.resources.on('ready', ()=>
         {
@@ -19,6 +19,11 @@ export default class World
         })
 
        
+    }
+
+    update()
+    {
+        
     }
 
    

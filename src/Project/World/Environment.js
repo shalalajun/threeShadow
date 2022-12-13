@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import Project from "../Project.js";
+import Debug from '../Utils/Debug.js';
+
 
 export default class Environment
 {
@@ -8,6 +10,12 @@ export default class Environment
         this.project = new Project();
         this.scene = this.project.scene;
         this.resources = this.project.resources;
+        this.debug = new Debug();
+
+        if(this.debug.active)
+        {
+            this.debugFolder = this.debug.ui.addFolder('environment')
+        }
      
         this.setSunLight();
         this.setEnvironmentMap();
@@ -22,14 +30,46 @@ export default class Environment
         this.sunLight.shadow.normalBias = 0.05
         this.sunLight.position.set(-3, 3, - 2.25)
         this.scene.add(this.sunLight)
+
+         // Debug
+         if(this.debug.active)
+         {
+             this.debugFolder
+                 .add(this.sunLight, 'intensity')
+                 .name('sunLightIntensity')
+                 .min(0)
+                 .max(10)
+                 .step(0.001)
+             
+             this.debugFolder
+                 .add(this.sunLight.position, 'x')
+                 .name('sunLightX')
+                 .min(- 5)
+                 .max(5)
+                 .step(0.001)
+             
+             this.debugFolder
+                 .add(this.sunLight.position, 'y')
+                 .name('sunLightY')
+                 .min(- 5)
+                 .max(5)
+                 .step(0.001)
+             
+             this.debugFolder
+                 .add(this.sunLight.position, 'z')
+                 .name('sunLightZ')
+                 .min(- 5)
+                 .max(5)
+                 .step(0.001)
+         }
     }
 
     setEnvironmentMap()
     {
-        this.environmentMap = {};
-        this.environmentMap.intensity = 0.4;
-        this.environmentMap.texture = this.resources.items.environmentMapTexture;
-        this.environmentMap.texture.encoding = THREE.sRGBEncoding;
+        this.environmentMap = {}
+        this.environmentMap.intensity = 0.4
+        this.environmentMap.texture = this.resources.items.environmentMapTexture
+        this.environmentMap.texture.encoding = THREE.sRGBEncoding
 
         this.scene.environment = this.environmentMap.texture;
 
@@ -39,13 +79,23 @@ export default class Environment
             {
                 if(child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial)
                 {
-                    child.material.envMap = this.environmentMap.texture;
-                    child.material.envMapIntensity = this.environmentMap.intensity;
-                    child.material.needsUpdate = true;
-
+                    child.material.envMap = this.environmentMap.texture
+                    child.material.envMapIntensity = this.environmentMap.intensity
+                    child.material.needsUpdate = true
                 }
             })
         }
         this.setEnvironmentMap.updateMaterial();
+
+        if(this.debug.active)
+        {
+            this.debugFolder
+                .add(this.environmentMap, 'intensity')
+                .name('envMapIntensity')
+                .min(0)
+                .max(4)
+                .step(0.001)
+                .onChange(this.environmentMap.updateMaterials)
+        }
     }
 }

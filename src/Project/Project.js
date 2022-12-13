@@ -6,14 +6,13 @@ import Renderer from './Renderer.js';
 import World from './World/World.js';
 import Resources from './Utils/Resources.js';
 import sources from './sources.js'
-import GUI from 'lil-gui'; 
+import Debug from './Utils/Debug.js';
 import Stats from 'stats.js';
 import { ShadowMapViewer } from 'three/examples/jsm/utils/ShadowMapViewer.js';
-
 import vertexShader from "./assets/shaders/vertex.glsl";
 import fragmentShader from "./assets/shaders/fragment.glsl"
 import shadowFragmentShader from "./assets/shaders/shadowFrag.glsl";
-import  Environment  from './World/Environment.js';
+
 
 
 
@@ -49,7 +48,9 @@ export default class Project
         this.camera = new Camera();
         this.renderer = new Renderer();
         this.world = new World();
+        this.debug = new Debug();
       
+     
         
 
         
@@ -61,7 +62,7 @@ export default class Project
 
         //console.log(circleInstances)
 
-        this.gui = new GUI();
+      
        
         this.init();
 
@@ -91,6 +92,7 @@ export default class Project
       
        
         this.camera.update();
+        this.world.update();
         this.renderer.update(); 
        
         this.stats.end();
@@ -166,21 +168,21 @@ export default class Project
             uColor: {
                 value: new THREE.Color(color)
             },
-            uLightPos: {
-                value: this.light.position
-            },
-            uDepthMap: {
-                value: this.light.shadow.map.texture
-            },
-            uShadowCameraP: {
-                value: this.shadowCamera.projectionMatrix
-            },
-            uShadowCameraV: {
-                value: this.shadowCamera.matrixWorldInverse
-            },
-            uIntensity_0: {
-                value: this.intensity_0
-            },
+            // uLightPos: {
+            //     value: this.light.position
+            // },
+            // uDepthMap: {
+            //     value: this.light.shadow.map.texture
+            // },
+            // uShadowCameraP: {
+            //     value: this.shadowCamera.projectionMatrix
+            // },
+            // uShadowCameraV: {
+            //     value: this.shadowCamera.matrixWorldInverse
+            // },
+            // uIntensity_0: {
+            //     value: this.intensity_0
+            // },
         }
         const material = new THREE.ShaderMaterial({
             vertexShader,
@@ -198,16 +200,5 @@ export default class Project
         return {material, shadowMaterial}
     }
     
-    createGui()
-    {
-        this.params = 
-        {
-            depthmapViewer: this.sizes.width <= 768 ? false : true,
-            visibleShadowCamera : true,
-            output: "color shading"
-        }
-        this.gui.add(this.params,"depthmapViewer").onChange((value) => {
-            this.depthViewer.enabled = value;
-        });
-    }
+   
 }
